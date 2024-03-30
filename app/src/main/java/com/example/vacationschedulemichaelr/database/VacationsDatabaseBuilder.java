@@ -14,6 +14,7 @@ import com.example.vacationschedulemichaelr.entities.Vacation;
 @Database(entities = {Vacation.class, Excursion.class}, version = 3, exportSchema = false)
 public abstract class VacationsDatabaseBuilder extends RoomDatabase {
 
+    //Test update for application
     public abstract VacationDAO vacationDAO();
     public abstract ExcursionDAO excursionDAO();
     private static volatile VacationsDatabaseBuilder INSTANCE;
