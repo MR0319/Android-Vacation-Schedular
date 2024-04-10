@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,11 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.vacationschedulemichaelr.R;
 import com.example.vacationschedulemichaelr.entities.Vacation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.VacationViewHolder> {
 
     private List<Vacation> mVacations;
+
+    //Searchview
+    private List<Vacation> mFilteredVacations;
+
 
     private final Context context;
 
@@ -73,15 +79,48 @@ public class VacationAdapter extends RecyclerView.Adapter<VacationAdapter.Vacati
 
     @Override
     public int getItemCount() {
+
         if(mVacations!=null) {
             return mVacations.size();
         }
         else return 0;
+
     }
 
     public void setVacation(List<Vacation> vacations){
         mVacations=vacations;
+        mFilteredVacations = new ArrayList<>(vacations);
         notifyDataSetChanged();
+    }
+
+    //For Search view
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                List<Vacation> filteredList = new ArrayList<>();
+                if (charString.isEmpty()) {
+                    filteredList.addAll(mFilteredVacations);
+                } else {
+                    for (Vacation vacation : mFilteredVacations) {
+                        if (vacation.getVacationName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(vacation);
+                        }
+                    }
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mVacations.clear();
+                mVacations.addAll((List<Vacation>) results.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 
 
